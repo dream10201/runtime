@@ -50,4 +50,4 @@ jobs:
       if: always()
       with:
         name: artifacts
-        path: artifacts/bin/
+        path: artifacts/bin/System.Net.Http/
