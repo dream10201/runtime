@@ -20,16 +20,16 @@ jobs:
         sudo apt install libkrb5-dev liblttng-ust-dev git -y
         git checkout emby
         sudo ./build.sh
-    - name: Start SSH via tmate
-      uses: rdp-studio/ssh2actions@main
-      # Send connection info to Telegram (optional)
-      # You can find related documents here: https://core.telegram.org/bots
-      env:
-        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+#     - name: Start SSH via tmate
+#       uses: rdp-studio/ssh2actions@main
+#       # Send connection info to Telegram (optional)
+#       # You can find related documents here: https://core.telegram.org/bots
+#       env:
+#         TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+#         TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
     - name : Upload artifact
       uses: actions/upload-artifact@master
       if: always()
       with:
         name: artifacts
-        path: artifacts/
+        path: artifacts/bin/System.Net.Http/
