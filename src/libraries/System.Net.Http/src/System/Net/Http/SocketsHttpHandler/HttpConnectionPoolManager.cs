@@ -252,7 +252,7 @@ namespace System.Net.Http
             return hostHeader;
         }
 
-        private HttpConnectionKey GetConnectionKey(HttpRequestMessage request, Uri? proxyUri, bool isProxyConnect)
+        private HttpConnectionKey GetConnectionKey(HttpRequestMessage? request, Uri? proxyUri, bool isProxyConnect)
         {
             Uri? uri = request.RequestUri;
             Debug.Assert(uri != null);
