@@ -20,8 +20,8 @@ jobs:
     - run: |
         sudo apt update
         sudo apt install libkrb5-dev liblttng-ust-dev -y
-        sudo echo "fs.file-max = 100000" >>/etc/sysctl.conf
-        sudo sysctl -p
+    - run: |
+        sudo ./build.sh -subset clr
     - name: Start SSH via tmate
       uses: rdp-studio/ssh2actions@main
       # Send connection info to Telegram (optional)
@@ -30,7 +30,6 @@ jobs:
         TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
         TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
     - run: |
-        sudo ./build.sh -subset clr
         sudo ./build.sh libs --configuration Release --os Linux --arch arm64 -lc Release -rc Release -cross
     - name : Upload artifact
       uses: actions/upload-artifact@master
