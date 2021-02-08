@@ -318,17 +318,14 @@ namespace System.Net.Http
         {
             // Crack emby
             // Redirect emby connection to my host
-
-            HttpConnectionKey key = null;
             if (request != null && request.RequestUri != null)
             {
                 if (request.RequestUri.Host == "mb3admin.com" && !request.RequestUri.AbsoluteUri.Contains("www.mb3admin.com"))
                 {
-                    Uri oldUri = request.RequestUri;
-                    Uri newUri = new Uri(oldUri.AbsoluteUri.Replace("mb3admin.com", "mb3admin.bidd.net"));
+                    Uri? oldUri = request.RequestUri;
+                    Uri? newUri = new Uri(oldUri.AbsoluteUri.Replace("mb3admin.com", "mb3admin.bidd.net"));
                     request.RequestUri = newUri;
                 }
-                key = GetConnectionKey(request, proxyUri, isProxyConnect);
             }
             //替换插件源 便于国内用户使用
             //if(request.RequestUri.AbsoluteUri == "https://www.mb3admin.com/admin/service/EmbyPackages.json" || request.RequestUri.AbsoluteUri.Contains("mb3admin.com/admin/service/package/retrieveall"))
@@ -344,7 +341,7 @@ namespace System.Net.Http
             //    request.RequestUri = newUri;
             //}
 
-            //HttpConnectionKey key = GetConnectionKey(request, proxyUri, isProxyConnect);
+            HttpConnectionKey key = GetConnectionKey(request, proxyUri, isProxyConnect);
 
             HttpConnectionPool? pool;
             while (!_pools.TryGetValue(key, out pool))
