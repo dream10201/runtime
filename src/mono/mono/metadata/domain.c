@@ -374,7 +374,6 @@ domain_id_alloc (MonoDomain *domain)
 
 static gsize domain_gc_bitmap [sizeof(MonoDomain)/4/32 + 1];
 static MonoGCDescriptor domain_gc_desc = MONO_GC_DESCRIPTOR_NULL;
-static guint32 domain_shadow_serial = 0L;
 
 /**
  * mono_domain_create:
@@ -401,10 +400,8 @@ MonoDomain *
 mono_domain_create (void)
 {
 	MonoDomain *domain;
-	guint32 shadow_serial;
   
 	mono_appdomains_lock ();
-	shadow_serial = domain_shadow_serial++;
   
 	if (!domain_gc_desc) {
 		unsigned int i, bit = 0;
@@ -421,7 +418,6 @@ mono_domain_create (void)
 	else
 		domain = (MonoDomain *)mono_gc_alloc_fixed (sizeof (MonoDomain), domain_gc_desc, MONO_ROOT_SOURCE_DOMAIN, NULL, "Domain Structure");
 
-	domain->shadow_serial = shadow_serial;
 	domain->domain = NULL;
 	domain->friendly_name = NULL;
 	domain->search_path = NULL;
@@ -553,7 +549,7 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 		runtimes = get_runtimes_from_exe (exe_filename, &exe_image);
 #ifdef HOST_WIN32
 		if (!exe_image) {
-			exe_image = mono_assembly_open_from_bundle (mono_domain_default_alc (domain), exe_filename, NULL, FALSE, NULL);
+			exe_image = mono_assembly_open_from_bundle (mono_domain_default_alc (domain), exe_filename, NULL, NULL);
 			if (!exe_image)
 				exe_image = mono_image_open (exe_filename, NULL);
 		}
@@ -581,7 +577,7 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 	while (tmp != NULL) {
 		current_runtime = (MonoRuntimeInfo*)tmp->data;
 		g_assert (current_runtime);
-		ass = mono_assembly_load_corlib (current_runtime, &status);
+		ass = mono_assembly_load_corlib (&status);
 		if (status != MONO_IMAGE_OK && status != MONO_IMAGE_ERROR_ERRNO)
 			break;
 		tmp = tmp->next;
@@ -1603,7 +1599,7 @@ get_runtimes_from_exe (const char *file, MonoImage **out_image)
 	}
 	
 	/* Look for a runtime with the exact version */
-	image = mono_assembly_open_from_bundle (mono_domain_default_alc (mono_domain_get ()), file, NULL, FALSE, NULL);
+	image = mono_assembly_open_from_bundle (mono_domain_default_alc (mono_domain_get ()), file, NULL, NULL);
 
 	if (image == NULL)
 		image = mono_image_open (file, NULL);
@@ -1638,17 +1634,6 @@ mono_get_runtime_info (void)
 	return current_runtime;
 }
 
-/**
- * mono_framework_version:
- *
- * Return the major version of the framework curently executing.
- */
-int
-mono_framework_version (void)
-{
-	return current_runtime->framework_version [0] - '0';
-}
-
 MonoAotCacheConfig *
 mono_get_aot_cache_config (void)
 {
@@ -1678,8 +1663,7 @@ mono_domain_get_assemblies (MonoDomain *domain, gboolean refonly)
 	mono_domain_assemblies_lock (domain);
 	for (tmp = domain->domain_assemblies; tmp; tmp = tmp->next) {
 		ass = (MonoAssembly *)tmp->data;
-		gboolean ass_ref_only = mono_asmctx_get_kind (&ass->context) == MONO_ASMCTX_REFONLY;
-		if (refonly != ass_ref_only)
+		if (refonly != FALSE)
 			continue;
 		g_ptr_array_add (assemblies, ass);
 	}
