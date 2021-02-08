@@ -11,18 +11,43 @@ jobs:
     if: github.event.repository.owner.id == github.event.sender.id
     steps:
     - uses: actions/checkout@v2
+      with:
+        ref: emby
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 5.0.x
     - run: |
         sudo apt update
-        sudo apt install libkrb5-dev liblttng-ust-dev -y
-        sudo ./build.sh
-        
+        sudo apt-get install -y cmake llvm-9 clang-9 build-essential python curl git lldb-6.0 liblldb-6.0-dev libunwind8 libunwind8-dev gettext libicu-dev liblttng-ust-dev libssl-dev libnuma-dev libkrb5-dev zlib1g-dev ninja-build
+        sudo apt-get install -y qemu qemu-user-static binfmt-support debootstrap
+        sudo apt-get install -y binutils-aarch64-linux-gnu
+#        sudo apt-get install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common
+#        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+#        sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+#        sudo apt-get update
+#        sudo apt-get install -y docker-ce docker-ce-cli containerd.io
+    - name: Install musl-cross-make
+      run: |
+        git clone https://github.com/richfelker/musl-cross-make.git
+        echo "TARGET = aarch64-alpine-linux-musl\nOUTPUT = /usr\nBINUTILS_CONFIG=--enable-gold=yes" >musl-cross-make/config.mak
+        cd musl-cross-make
+        make && sudo make install
+        cd ../
+        #&& rm -r musl-cross-make/
+    - run: |
+        sudo ROOTFS_DIR=/home/cross/arm64 ./eng/common/cross/build-rootfs.sh arm64
+        sudo ROOTFS_DIR=/home/cross/arm64 ./build.sh --subset Libs --arch arm64 -c Release
+#     - name: Start SSH via tmate
+#       uses: rdp-studio/ssh2actions@main
+#       env:
+#         TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+#         TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+#     - run: |
+#         sudo ./build.sh libs --configuration Release --os Linux --arch arm64 -lc Release -rc Release -cross
     - name : Upload artifact
       uses: actions/upload-artifact@master
       if: always()
       with:
         name: artifacts
-        path: artifacts/
+        path: artifacts/bin/System.Net.Http/
