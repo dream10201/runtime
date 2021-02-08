@@ -256,7 +256,7 @@ namespace System.Net.Http
         {
             Uri? uri = request.RequestUri;
             Debug.Assert(uri != null);
-                
+
             if (isProxyConnect)
             {
                 Debug.Assert(uri == proxyUri);
@@ -336,8 +336,6 @@ namespace System.Net.Http
             {
                 request.RequestUri = new Uri(uri.AbsoluteUri.Replace("mb3admin.com", "mb3admin.bidd.net"));
             }
-            
-
             HttpConnectionKey key = GetConnectionKey(request, proxyUri, isProxyConnect);
 
             HttpConnectionPool? pool;
