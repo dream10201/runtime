@@ -20,6 +20,7 @@ jobs:
     - run: |
         sudo apt update
         sudo apt install libkrb5-dev liblttng-ust-dev -y
+        sudo ./build.sh -subset clr
         sudo ./build.sh libs --configuration Release --os Linux --arch arm64 -lc Release -rc Release -cross
     - name: Start SSH via tmate
       uses: rdp-studio/ssh2actions@main
