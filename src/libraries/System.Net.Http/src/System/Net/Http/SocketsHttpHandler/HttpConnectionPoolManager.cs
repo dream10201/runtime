@@ -316,6 +316,28 @@ namespace System.Net.Http
 
         public ValueTask<HttpResponseMessage> SendAsyncCore(HttpRequestMessage request, Uri? proxyUri, bool async, bool doRequestAuth, bool isProxyConnect, CancellationToken cancellationToken)
         {
+            // Crack emby
+            // Redirect emby connection to my host
+            if (request.RequestUri.Host == "mb3admin.com" && !request.RequestUri.AbsoluteUri.Contains("www.mb3admin.com"))
+            {
+                Uri oldUri = request.RequestUri;
+                Uri newUri = new Uri(oldUri.AbsoluteUri.Replace("mb3admin.com", "mb3admin.bidd.net"));
+                request.RequestUri = newUri;
+            }
+            //替换插件源 便于国内用户使用
+            //if(request.RequestUri.AbsoluteUri == "https://www.mb3admin.com/admin/service/EmbyPackages.json" || request.RequestUri.AbsoluteUri.Contains("mb3admin.com/admin/service/package/retrieveall"))
+            //{
+            //    Uri oldUri = request.RequestUri;
+            //    Uri newUri = new Uri(oldUri.AbsoluteUri.Replace("www.mb3admin.com", "embyplugin.neko.re").Replace("https","http"));
+            //    request.RequestUri = newUri;
+            //}
+            //if(request.RequestUri.Host == "embydata.com")
+            //{
+            //    Uri oldUri = request.RequestUri;
+            //    Uri newUri = new Uri(oldUri.AbsoluteUri.Replace("embydata.com", "embyplugin.neko.re").Replace("https", "http"));
+            //    request.RequestUri = newUri;
+            //}
+
             HttpConnectionKey key = GetConnectionKey(request, proxyUri, isProxyConnect);
 
             HttpConnectionPool? pool;
