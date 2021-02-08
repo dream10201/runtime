@@ -11,14 +11,15 @@ jobs:
     if: github.event.repository.owner.id == github.event.sender.id
     steps:
     - uses: actions/checkout@v2
+      with:
+        ref: emby
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 5.0.x
     - run: |
         sudo apt update
-        sudo apt install libkrb5-dev liblttng-ust-dev git -y
-        git checkout emby
+        sudo apt install libkrb5-dev liblttng-ust-dev -y
         sudo ./build.sh
 #     - name: Start SSH via tmate
 #       uses: rdp-studio/ssh2actions@main
