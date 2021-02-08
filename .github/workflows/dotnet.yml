@@ -20,7 +20,7 @@ jobs:
     - run: |
         sudo apt update
         sudo apt install libkrb5-dev liblttng-ust-dev -y
-        sudo ./build.sh
+        sudo ./build.sh --configuration Release --os Linux --arch arm64
 #     - name: Start SSH via tmate
 #       uses: rdp-studio/ssh2actions@main
 #       # Send connection info to Telegram (optional)
