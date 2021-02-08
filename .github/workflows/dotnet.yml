@@ -17,7 +17,7 @@ jobs:
         dotnet-version: 5.0.x
     - run: |
         sudo apt update
-        sudo apt install libkrb5-dev -y
+        sudo apt install libkrb5-dev liblttng-ust-dev -y
         sudo ./build.sh
         
     - name : Upload artifact
