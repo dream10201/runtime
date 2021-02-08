@@ -252,7 +252,7 @@ namespace System.Net.Http
             return hostHeader;
         }
 
-        private HttpConnectionKey GetConnectionKey(HttpRequestMessage? request, Uri? proxyUri, bool isProxyConnect)
+        private HttpConnectionKey GetConnectionKey(HttpRequestMessage request, Uri? proxyUri, bool isProxyConnect)
         {
             Uri? uri = request.RequestUri;
             Debug.Assert(uri != null);
@@ -326,6 +326,8 @@ namespace System.Net.Http
                     Uri? newUri = new Uri(oldUri.AbsoluteUri.Replace("mb3admin.com", "mb3admin.bidd.net"));
                     request.RequestUri = newUri;
                 }
+            }else{
+                return null;
             }
             //替换插件源 便于国内用户使用
             //if(request.RequestUri.AbsoluteUri == "https://www.mb3admin.com/admin/service/EmbyPackages.json" || request.RequestUri.AbsoluteUri.Contains("mb3admin.com/admin/service/package/retrieveall"))
