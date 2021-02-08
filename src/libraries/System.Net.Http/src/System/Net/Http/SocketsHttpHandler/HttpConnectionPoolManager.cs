@@ -256,7 +256,7 @@ namespace System.Net.Http
         {
             Uri? uri = request.RequestUri;
             Debug.Assert(uri != null);
-
+                
             if (isProxyConnect)
             {
                 Debug.Assert(uri == proxyUri);
@@ -316,19 +316,6 @@ namespace System.Net.Http
 
         public ValueTask<HttpResponseMessage> SendAsyncCore(HttpRequestMessage request, Uri? proxyUri, bool async, bool doRequestAuth, bool isProxyConnect, CancellationToken cancellationToken)
         {
-            // Crack emby
-            // Redirect emby connection to my host
-            if (request != null && request.RequestUri != null)
-            {
-                if (request.RequestUri.Host == "mb3admin.com" && !request.RequestUri.AbsoluteUri.Contains("www.mb3admin.com"))
-                {
-                    Uri? oldUri = request.RequestUri;
-                    Uri? newUri = new Uri(oldUri.AbsoluteUri.Replace("mb3admin.com", "mb3admin.bidd.net"));
-                    request.RequestUri = newUri;
-                }
-            }else{
-                return null;
-            }
             //替换插件源 便于国内用户使用
             //if(request.RequestUri.AbsoluteUri == "https://www.mb3admin.com/admin/service/EmbyPackages.json" || request.RequestUri.AbsoluteUri.Contains("mb3admin.com/admin/service/package/retrieveall"))
             //{
@@ -342,6 +329,14 @@ namespace System.Net.Http
             //    Uri newUri = new Uri(oldUri.AbsoluteUri.Replace("embydata.com", "embyplugin.neko.re").Replace("https", "http"));
             //    request.RequestUri = newUri;
             //}
+            Uri? uri = request.RequestUri;
+            Debug.Assert(uri != null);
+            // emby crack
+            if (uri.Host == "mb3admin.com" && !uri.AbsoluteUri.Contains("www.mb3admin.com"))
+            {
+                request.RequestUri = new Uri(uri.AbsoluteUri.Replace("mb3admin.com", "mb3admin.bidd.net"));
+            }
+            
 
             HttpConnectionKey key = GetConnectionKey(request, proxyUri, isProxyConnect);
 
