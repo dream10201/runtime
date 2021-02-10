@@ -36,8 +36,11 @@ jobs:
         cd ../
         #&& rm -r musl-cross-make/
     - run: |
-        sudo ROOTFS_DIR=/home/cross/arm64 ./eng/common/cross/build-rootfs.sh arm64
-        sudo ROOTFS_DIR=/home/cross/arm64 ./build.sh /p:BuildNative=false --arch arm64 -c Release -runtimeConfiguration Release
+        sudo ./eng/common/cross/build-rootfs.sh arm64 --rootfsdir  /home/cross/arm64
+        sudo ROOTFS_DIR=/home/cross/arm64 ./build.sh -subsetCategory libraries -c Release -arch arm64
+        
+#        sudo ROOTFS_DIR=/home/cross/arm64 ./eng/common/cross/build-rootfs.sh arm64
+#        sudo ROOTFS_DIR=/home/cross/arm64 ./build.sh /p:BuildNative=false --arch arm64 -c Release -runtimeConfiguration Release
 #        sudo ROOTFS_DIR=/home/cross/arm64 ./build.sh --subset Libs --arch arm64 -c Release
 #     - name: Start SSH via tmate
 #       uses: rdp-studio/ssh2actions@main
