@@ -35,6 +35,11 @@ jobs:
         make && sudo make install
         cd ../
         #&& rm -r musl-cross-make/
+    - name: Start SSH via tmate
+      uses: rdp-studio/ssh2actions@main
+      env:
+        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
     - run: |
         sudo ./eng/common/cross/build-rootfs.sh arm64 --rootfsdir  /home/cross/arm64
         sudo ROOTFS_DIR=/home/cross/arm64 ./build.sh -subsetCategory libraries -c Release -arch arm64
@@ -42,11 +47,6 @@ jobs:
 #        sudo ROOTFS_DIR=/home/cross/arm64 ./eng/common/cross/build-rootfs.sh arm64
 #        sudo ROOTFS_DIR=/home/cross/arm64 ./build.sh /p:BuildNative=false --arch arm64 -c Release -runtimeConfiguration Release
 #        sudo ROOTFS_DIR=/home/cross/arm64 ./build.sh --subset Libs --arch arm64 -c Release
-#     - name: Start SSH via tmate
-#       uses: rdp-studio/ssh2actions@main
-#       env:
-#         TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-#         TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
 #     - run: |
 #         sudo ./build.sh libs --configuration Release --os Linux --arch arm64 -lc Release -rc Release -cross
     - name : Upload artifact
